@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-key="pageTitle">MMSE Expected Range Estimator (Illustrative)</title>
+    <style>
+        /* General body styles - direction will be set by JS */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        /* Ensure text alignment for RTL languages */
+        body[dir="rtl"] {
+            text-align: right; /* Aligns block-level elements */
+        }
+        /* Specific elements that might need text-align: left for LTR languages */
+        body[dir="ltr"] .language-selector {
+            text-align: right; /* Keep language selector right for LTR */
+        }
+        body[dir="rtl"] .language-selector {
+            text-align: left; /* Move language selector left for RTL */
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center; /* Centered headings remain centered */
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select, input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            text-align: center; /* Result text remains centered */
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        /* Adjusted language selector alignment for RTL */
+        .language-selector {
+             margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-selector">
+            <label for="languageSelect" data-key="chooseLanguage">Choose Language:</label>
+            <select id="languageSelect" onchange="setLanguage()">
+                <option value="en">English</option>
+                <option value="he">עברית</option>
+                <option value="ar">العربية</option>
+                <option value="ru">Русский</option>
+            </select>
+        </div>
+
+        <h1 data-key="mainHeading">MMSE Expected Range Estimator (Illustrative)</h1>
+        <p data-key="introParagraph1">This tool provides an *illustrative* estimate of the expected normal MMSE score range based on commonly cited research regarding age and education effects. **It is NOT an official diagnostic tool.**</p>
+        <p data-key="introParagraph2">For accurate clinical interpretation, consult a healthcare professional and the official MMSE manual and normative data.</p>
+
+        <div>
+            <label for="age" data-key="selectAgeGroup">Select Age Group:</label>
+            <select id="age">
+                <option value="18-64" data-key="age18_64">18-64 years</option>
+                <option value="65-74" data-key="age65_74">65-74 years</option>
+                <option value="75-84" data-key="age75_84">75-84 years</option>
+                <option value="85+" data-key="age85_plus">85+ years</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="education" data-key="selectEducationYears">Select Years of Education:</label>
+            <select id="education">
+                <option value="0-4" data-key="edu0_4">0-4 years (Limited)</option>
+                <option value="5-8" data-key="edu5_8">5-8 years (Elementary)</option>
+                <option value="9-12" data-key="edu9_12">9-12 years (High School)</option>
+                <option value="13+" data-key="edu13_plus">13+ years (College/Higher)</option>
+            </select>
+        </div>
+
+        <button onclick="calculateMMSE()" data-key="getRangeButton">Get Expected Range</button>
+
+        <div id="result">
+            <p data-key="initialResultText">Select your age and education to see the estimated normal range.</p>
+        </div>
+
+        <div class="disclaimer">
+            <p data-key="disclaimerTitle"><strong>Disclaimer:</strong></p>
+            <p data-key="disclaimerText">This calculator uses generalized, illustrative data for educational purposes only and should not be used for clinical diagnosis or decision-making. The Mini-Mental State Examination (MMSE) is a proprietary tool, and its official normative data and interpretation guidelines are available through its publisher, PAR, Inc. Interpretation of MMSE scores requires a trained clinician and consideration of individual factors beyond age and education.</p>
+        </div>
+    </div>
+
+    <script>
+        // Define all translations
+        const translations = {
+            en: {
+                pageTitle: "MMSE Expected Range Estimator (Illustrative)",
+                chooseLanguage: "Choose Language:",
+                mainHeading: "MMSE Expected Range Estimator (Illustrative)",
+                introParagraph1: "This tool provides an *illustrative* estimate of the expected normal MMSE score range based on commonly cited research regarding age and education effects. **It is NOT an official diagnostic tool.**",
+                introParagraph2: "For accurate clinical interpretation, consult a healthcare professional and the official MMSE manual and normative data.",
+                selectAgeGroup: "Select Age Group:",
+                age18_64: "18-64 years",
+                age65_74: "65-74 years",
+                age75_84: "75-84 years",
+                age85_plus: "85+ years",
+                selectEducationYears: "Select Years of Education:",
+                edu0_4: "0-4 years (Limited)",
+                edu5_8: "5-8 years (Elementary)",
+                edu9_12: "9-12 years (High School)",
+                edu13_plus: "13+ years (College/Higher)",
+                getRangeButton: "Get Expected Range",
+                initialResultText: "Select your age and education to see the estimated normal range.",
+                estimatedRangePrefix: "Estimated Normal Expected MMSE Score Range:",
+                furtherEvaluationNeeded: "Scores below this range may warrant further evaluation.",
+                disclaimerTitle: "Disclaimer:",
+                disclaimerText: "This calculator uses generalized, illustrative data for educational purposes only and should not be used for clinical diagnosis or decision-making. The Mini-Mental State Examination (MMSE) is a proprietary tool, and its official normative data and interpretation guidelines are available through its publisher, PAR, Inc. Interpretation of MMSE scores requires a trained clinician and consideration of individual factors beyond age and education.",
+                dataNotAvailable: "Data not available for this combination."
+            },
+            he: {
+                pageTitle: "אומדן טווח ציוני MMSE צפוי (המחשה)",
+                chooseLanguage: "בחר שפה:",
+                mainHeading: "אומדן טווח ציוני MMSE צפוי (המחשה)",
+                introParagraph1: "כלי זה מספק הערכה *המחשתית* של טווח ציוני MMSE תקינים צפויים, בהתבסס על מחקרים נפוצים בנוגע להשפעות גיל וחינוך. **זהו אינו כלי אבחוני רשמי.**",
+                introParagraph2: "לצורך פרשנות קלינית מדויקת, יש להתייעץ עם איש מקצוע בתחום הבריאות ועם המדריך הרשמי של MMSE ונתוני הנורמות.",
+                selectAgeGroup: "בחר קבוצת גיל:",
+                age18_64: "18-64 שנים",
+                age65_74: "65-74 שנים",
+                age75_84: "75-84 שנים",
+                age85_plus: "85+ שנים",
+                selectEducationYears: "בחר שנות השכלה:",
+                edu0_4: "0-4 שנים (מוגבלת)",
+                edu5_8: "5-8 שנים (יסודי)",
+                edu9_12: "9-12 שנים (תיכון)",
+                edu13_plus: "13+ שנים (מכללה/אקדמיה)",
+                getRangeButton: "קבל טווח צפוי",
+                initialResultText: "בחר את גילך והשכלתך כדי לראות את הטווח המשוער.",
+                estimatedRangePrefix: "טווח ציון MMSE צפוי תקין משוער:",
+                furtherEvaluationNeeded: "ציונים מתחת לטווח זה עשויים לדרוש הערכה נוספת.",
+                disclaimerTitle: "הצהרת אחריות:",
+                disclaimerText: "מחשבון זה משתמש בנתונים כלליים ומדגימים בלבד למטרות חינוכיות ואין להשתמש בו לאבחון קליני או קבלת החלטות. המיני-מבחן למצב מנטלי (MMSE) הוא כלי קנייני, והנתונים הנורמטיביים הרשמיים שלו והנחיות הפרשנות זמינים דרך המוציא לאור שלו, PAR, Inc. פרשנות ציוני MMSE דורשת קלינאי מיומן והתחשבות בגורמים אינדיבידואליים מעבר לגיל והשכלה.",
+                dataNotAvailable: "נתונים אינם זמינים עבור שילוב זה."
+            },
+            ar: {
+                pageTitle: "تقدير النطاق المتوقع لدرجة MMSE (توضيحي)",
+                chooseLanguage: "اختر اللغة:",
+                mainHeading: "تقدير النطاق المتوقع لدرجة MMSE (توضيحي)",
+                introParagraph1: "توفر هذه الأداة تقديرًا *توضيحيًا* للنطاق المتوقع لدرجة MMSE الطبيعية بناءً على الأبحاث الشائعة المتعلقة بتأثيرات العمر والتعليم. **إنها ليست أداة تشخيصية رسمية.**",
+                introParagraph2: "للتفسير السريري الدقيق، استشر أخصائي رعاية صحية ودليل MMSE الرسمي والبيانات المعيارية.",
+                selectAgeGroup: "اختر الفئة العمرية:",
+                age18_64: "18-64 سنة",
+                age65_74: "65-74 سنة",
+                age75_84: "75-84 سنة",
+                age85_plus: "85+ سنة",
+                selectEducationYears: "اختر سنوات التعليم:",
+                edu0_4: "0-4 سنوات (محدود)",
+                edu5_8: "5-8 سنوات (ابتدائي)",
+                edu9_12: "9-12 سنة (ثانوي)",
+                edu13_plus: "13+ سنة (جامعي/أعلى)",
+                getRangeButton: "الحصول على النطاق المتوقع",
+                initialResultText: "اختر عمرك ومستواك التعليمي لترى النطاق المقدر.",
+                estimatedRangePrefix: "النطاق المتوقع لدرجة MMSE الطبيعية المقدرة:",
+                furtherEvaluationNeeded: "الدرجات الأقل من هذا النطاق قد تستدعي مزيدًا من التقييم.",
+                disclaimerTitle: "إخلاء مسؤولية:",
+                disclaimerText: "تستخدم هذه الآلة الحاسبة بيانات عامة وتوضيحية لأغراض تعليمية فقط ولا ينبغي استخدامها للتشخيص السريري أو اتخاذ القرارات. اختبار الحالة العقلية المصغر (MMSE) هو أداة مملوكة، وتتوفر بياناتها المعيارية الرسمية وإرشادات التفسير من خلال ناشرها، PAR, Inc. يتطلب تفسير درجات MMSE طبيبًا مدربًا ومراعاة العوامل الفردية بخلاف العمر والتعليم.",
+                dataNotAvailable: "البيانات غير متاحة لهذا الدمج."
+            },
+            ru: {
+                pageTitle: "Оценка ожидаемого диапазона MMSE (иллюстративно)",
+                chooseLanguage: "Выберите язык:",
+                mainHeading: "Оценка ожидаемого диапазона MMSE (иллюстративно)",
+                introParagraph1: "Этот инструмент предоставляет *иллюстративную* оценку ожидаемого нормального диапазона баллов MMSE на основе общепринятых исследований влияния возраста и образования. **Это НЕ официальный диагностический инструмент.**",
+                introParagraph2: "Для точной клинической интерпретации проконсультируйтесь с медицинским работником и официальным руководством по MMSE и нормативными данными.",
+                selectAgeGroup: "Выберите возрастную группу:",
+                age18_64: "18-64 года",
+                age65_74: "65-74 года",
+                age75_84: "75-84 года",
+                age85_plus: "85+ лет",
+                selectEducationYears: "Выберите количество лет образования:",
+                edu0_4: "0-4 года (ограниченное)",
+                edu5_8: "5-8 лет (начальное)",
+                edu9_12: "9-12 лет (среднее)",
+                edu13_plus: "13+ лет (колледж/высшее)",
+                getRangeButton: "Получить ожидаемый диапазон",
+                initialResultText: "Выберите свой возраст и образование, чтобы увидеть предполагаемый нормальный диапазон.",
+                estimatedRangePrefix: "Примерный нормальный ожидаемый диапазон баллов MMSE:",
+                furtherEvaluationNeeded: "Оценки ниже этого диапазона могут потребовать дальнейшей оценки.",
+                disclaimerTitle: "Отказ от ответственности:",
+                disclaimerText: "Этот калькулятор использует обобщенные, иллюстративные данные только в образовательных целях и не должен использоваться для клинической диагностики или принятия решений. Мини-тест психического состояния (MMSE) является проприетарным инструментом, и его официальные нормативные данные и рекомендации по интерпретации доступны через его издателя, PAR, Inc. Интерпретация баллов MMSE требует обученного клинициста и учета индивидуальных факторов, помимо возраста и образования.",
+                dataNotAvailable: "Данные недоступны для этой комбинации."
+            }
+        };
+
+        // Function to set the language and direction
+        function setLanguage() {
+            const selectedLanguage = document.getElementById('languageSelect').value;
+            const bodyElement = document.body;
+
+            // Set text direction based on language
+            if (selectedLanguage === 'he' || selectedLanguage === 'ar') {
+                bodyElement.setAttribute('dir', 'rtl');
+            } else {
+                bodyElement.setAttribute('dir', 'ltr');
+            }
+
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translations[selectedLanguage] && translations[selectedLanguage][key]) {
+                    element.textContent = translations[selectedLanguage][key];
+                }
+            });
+
+            // Handle options separately as textContent on select options can be tricky
+            document.querySelector('title').textContent = translations[selectedLanguage].pageTitle;
+
+            // Update options in age select
+            document.querySelector('#age option[value="18-64"]').textContent = translations[selectedLanguage].age18_64;
+            document.querySelector('#age option[value="65-74"]').textContent = translations[selectedLanguage].age65_74;
+            document.querySelector('#age option[value="75-84"]').textContent = translations[selectedLanguage].age75_84;
+            document.querySelector('#age option[value="85+"]').textContent = translations[selectedLanguage].age85_plus;
+
+            // Update options in education select
+            document.querySelector('#education option[value="0-4"]').textContent = translations[selectedLanguage].edu0_4;
+            document.querySelector('#education option[value="5-8"]').textContent = translations[selectedLanguage].edu5_8;
+            document.querySelector('#education option[value="9-12"]').textContent = translations[selectedLanguage].edu9_12;
+            document.querySelector('#education option[value="13+"]').textContent = translations[selectedLanguage].edu13_plus;
+
+            // Recalculate MMSE to update result text with new language
+            calculateMMSE();
+        }
+
+        // Initial call to set the default language (English) and direction when the page loads
+        document.addEventListener('DOMContentLoaded', setLanguage);
+
+
+        function calculateMMSE() {
+            const ageGroup = document.getElementById('age').value;
+            const educationLevel = document.getElementById('education').value;
+            const selectedLanguage = document.getElementById('languageSelect').value;
+
+            let expectedRange = translations[selectedLanguage].dataNotAvailable;
+
+            // Illustrative data based on general trends (NOT official proprietary data)
+            // Lower end represents a common cutoff for 'normal' given the demographic
+            // Higher end is typically 30 (max score) for most healthy individuals
+            const normativeData = {
+                "0-4": {
+                    "18-64": "20-26",
+                    "65-74": "19-25",
+                    "75-84": "18-24",
+                    "85+":   "17-23"
+                },
+                "5-8": {
+                    "18-64": "24-29",
+                    "65-74": "23-28",
+                    "75-84": "22-27",
+                    "85+":   "20-26"
+                },
+                "9-12": {
+                    "18-64": "26-30",
+                    "65-74": "25-30",
+                    "75-84": "24-29",
+                    "85+":   "23-28"
+                },
+                "13+": { // College or higher
+                    "18-64": "27-30",
+                    "65-74": "26-30",
+                    "75-84": "25-30",
+                    "85+":   "24-29"
+                }
+            };
+
+            if (normativeData[educationLevel] && normativeData[educationLevel][ageGroup]) {
+                expectedRange = normativeData[educationLevel][ageGroup];
+                document.getElementById('result').innerHTML = `
+                    <p><strong>${translations[selectedLanguage].estimatedRangePrefix} ${expectedRange}</strong></p>
+                    <p>${translations[selectedLanguage].furtherEvaluationNeeded}</p>`;
+            } else {
+                document.getElementById('result').innerHTML = `<p>${translations[selectedLanguage].dataNotAvailable}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
